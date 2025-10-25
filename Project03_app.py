@@ -558,13 +558,13 @@ if st.session_state.logged_in:
              st.markdown("---")
              st.header("🧠 Select a Security Module")
              cols = st.columns(3)
-for i, mod in enumerate(MODULE_FUNCTIONS.keys()):
-        with cols[i % 3]:
-            if st.button(mod, key=f"mod_{mod}"):
-                st.session_state.page = mod
-                st.rerun()
-        st.header("Select a Module")
-cols = st.columns(3)
+        for i, mod in enumerate(MODULE_FUNCTIONS.keys()):
+            with cols[i % 3]:
+                if st.button(mod, key=f"mod_{mod}"):
+                    st.session_state.page = mod
+                    st.rerun()
+                    st.header("Select a Module")
+                    cols = st.columns(3)
 for i, mod in enumerate(MODULE_FUNCTIONS.keys()):
     with cols[i % 3]:
         if st.button(mod, key=f"mod_{mod}"):
