@@ -545,8 +545,8 @@ if st.session_state.logged_in:
                  with col3:
                      st.metric("Detected Phishing Sites (24h)", f"{random.randint(1000, 5000)}+")
                      st.metric("Global Intrusion Attempts", f"{random.randint(50000, 120000)}+")
-    st.header("Select a Module")
-    cols = st.columns(3)
+         st.header("Select a Module")
+         cols = st.columns(3)
 for i, mod in enumerate(MODULE_FUNCTIONS.keys()):
     with cols[i % 3]:
         if st.button(mod, key=f"mod_{mod}"):
