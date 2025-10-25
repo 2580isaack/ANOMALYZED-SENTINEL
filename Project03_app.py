@@ -108,6 +108,53 @@ def create_users_table():
 
     conn.commit()
     conn.close()
+def ensure_reset_codes_table():
+    """
+    Ensure the reset_codes table exists with the expected schema.
+    If an incompatible schema exists, drop and recreate the table.
+    """
+    conn = sqlite3.connect("users.db")
+    c = conn.cursor()
+
+    # If table doesn't exist, create it (safe)
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS reset_codes(
+            email TEXT PRIMARY KEY,
+            code TEXT,
+            expiry_time TEXT
+        )
+    """)
+    conn.commit()
+
+    # Check current schema
+    c.execute("PRAGMA table_info(reset_codes)")
+    cols = {row[1]: row[2].upper() for row in c.fetchall()}  # {name: type}
+    expected = {"email": "TEXT", "code": "TEXT", "expiry_time": "TEXT"}
+
+    # If any expected column missing or type differs, recreate table
+    mismatch = False
+    for k, t in expected.items():
+        if k not in cols or cols[k] != t:
+            mismatch = True
+            break
+
+    if mismatch:
+        # drop and recreate (keeps DB stable, but loses reset_codes only)
+        try:
+            c.execute("DROP TABLE IF EXISTS reset_codes")
+            c.execute("""
+                CREATE TABLE reset_codes(
+                    email TEXT PRIMARY KEY,
+                    code TEXT,
+                    expiry_time TEXT
+                )
+            """)
+            conn.commit()
+            print("[DB MIGRATION] reset_codes table recreated to expected schema.")
+        except Exception as e:
+            print("[DB MIGRATION ERROR]", e)
+    conn.close()
+
 def add_user(u, pw, email, adm=False):
      conn = sqlite3.connect("users.db")
      c = conn.cursor()
