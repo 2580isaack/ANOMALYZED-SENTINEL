@@ -566,3 +566,43 @@ if st.session_state.get("page") in MODULE_FUNCTIONS:
      if st.button("🔙 Back to Dashboard", key="back_btn"):
          st.session_state.page = "Dashboard"
          st.rerun()
+       
+import sqlite3
+import bcrypt
+
+username = "isaackmutembei"
+email = "isaacksani352@gmail.com"
+password_plain = "Admin@2025!"   # change this immediately after first login
+
+conn = sqlite3.connect("users.db")
+c = conn.cursor()
+
+# Ensure users table exists (mirrors your app's create_users_table)
+c.execute("""
+CREATE TABLE IF NOT EXISTS users(
+    username TEXT PRIMARY KEY,
+    password BLOB NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    is_admin INTEGER DEFAULT 0,
+    otp TEXT,
+    otp_expiry TEXT,
+    verified INTEGER DEFAULT 0,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+)
+""")
+
+# Only insert if username/email not already present
+c.execute("SELECT 1 FROM users WHERE username=? OR email=?", (username, email))
+if c.fetchone():
+    print("Admin user already exists — skipping creation.")
+else:
+    pw_hash = bcrypt.hashpw(password_plain.encode(), bcrypt.gensalt())
+    c.execute(
+        "INSERT INTO users (username, password, email, is_admin) VALUES (?, ?, ?, ?)",
+        (username, pw_hash, email, 1),
+    )
+    conn.commit()
+    print(f"Admin user created. Username: {username}  Password: {password_plain}")
+
+conn.close()
+
