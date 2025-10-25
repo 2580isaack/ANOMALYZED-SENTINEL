@@ -157,7 +157,8 @@ def detect_anomalies(df):
      if num.empty:
          raise ValueError("No numeric columns.")
      rs = num.sum(axis=1)
-     return df[rs > rs.mean()]_PAT = {
+     return df[rs > rs.mean()]
+_PAT = {
      "urgent": r"urgent",
      "click here": r"click\s+here",
      "verify": r"verify\s+(your\s+)?account",
