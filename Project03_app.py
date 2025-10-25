@@ -534,37 +534,27 @@ if st.session_state.logged_in:
          st.session_state.clear()
          st.rerun()
      elif nav == "Dashboard":
-    st.markdown("### 🌍 Live Cybersecurity Insights")
-
-    # ─── 3-column Layout ───────────────────────────────────────────────
-    col1, col2, col3 = st.columns(3)
-
-    # Column 1 – Kaspersky Map (with fallback)
-    with col1:
-        st.subheader("Kaspersky Cyber Map")
-        try:
-            components.iframe("https://cybermap.kaspersky.com", height=250)
-        except:
-            st.info("⚠️ Unable to display Kaspersky map (embedding blocked).")
-        st.caption("Source: kaspersky.com")
-
-    # Column 2 – Checkpoint Map (with fallback)
-    with col2:
-        st.subheader("Checkpoint Threat Map")
-        try:
-            components.iframe("https://threatmap.checkpoint.com", height=250)
-        except:
-            st.info("⚠️ Unable to display Checkpoint map (embedding blocked).")
-        st.caption("Source: checkpoint.com")
-
-    # Column 3 – Live Metrics
-    with col3:
-        st.subheader("Live Metrics")
-        st.metric("Detected Phishing Sites (24h)", f"{random.randint(1000, 5000)}+")
-        st.metric("Global Intrusion Attempts", f"{random.randint(50000, 120000)}+")
-        st.metric("Blocked Attacks", f"{random.randint(20000, 80000)}+")
-
-    # ─── Add Navigation to Modules ─────────────────────────────────────
+         st.markdown("### 🌍 Live Cybersecurity Insights")
+         col1, col2, col3 = st.columns(3)
+         with col1:
+             st.subheader("Kaspersky Cyber Map")
+             try:
+                 components.iframe("https://cybermap.kaspersky.com", height=250)
+             except:
+                 st.info("⚠️ Unable to display Kaspersky map (embedding blocked).")
+                 st.caption("Source: kaspersky.com")
+         with col2:
+             st.subheader("Checkpoint Threat Map")
+             try:
+                 components.iframe("https://threatmap.checkpoint.com", height=250)
+             except:
+                 st.info("⚠️ Unable to display Checkpoint map (embedding blocked).")
+                 st.caption("Source: checkpoint.com")
+         with col3:
+             st.subheader("Live Metrics")
+             st.metric("Detected Phishing Sites (24h)", f"{random.randint(1000, 5000)}+")
+             st.metric("Global Intrusion Attempts", f"{random.randint(50000, 120000)}+")
+             st.metric("Blocked Attacks", f"{random.randint(20000, 80000)}+")
     st.markdown("---")
     st.header("🧠 Select a Security Module")
     cols = st.columns(3)
