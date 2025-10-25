@@ -536,42 +536,44 @@ if st.session_state.logged_in:
         st.rerun()
 
     elif nav == "Dashboard":
-        st.markdown("### 🌍 Live Cybersecurity Insights")
+    st.markdown("### 🌍 Live Cybersecurity Insights")
 
-        col1, col2, col3 = st.columns(3)
+    col1, col2, col3 = st.columns(3)
 
-        with col1:
-            st.subheader("Kaspersky Cyber Map")
-            try:
-                components.iframe("https://cybermap.kaspersky.com", height=250)
-            except:
-                st.info("⚠️ Unable to display Kaspersky map (embedding blocked).")
-            st.caption("Source: kaspersky.com")
+    with col1:
+        st.subheader("Kaspersky Cyber Map")
+        st.image(
+            "https://i.imgur.com/l7ZBO7C.png",
+            caption="Kaspersky Live Threat Map (Preview)",
+            use_container_width=True
+        )
+        st.caption("[View Live Map](https://cybermap.kaspersky.com)")
 
-        with col2:
-            st.subheader("Checkpoint Threat Map")
-            try:
-                components.iframe("https://threatmap.checkpoint.com", height=250)
-            except:
-                st.info("⚠️ Unable to display Checkpoint map (embedding blocked).")
-            st.caption("Source: checkpoint.com")
+    with col2:
+        st.subheader("Checkpoint Threat Map")
+        st.image(
+            "https://i.imgur.com/0nA2oSO.png",
+            caption="Checkpoint Threat Map (Preview)",
+            use_container_width=True
+        )
+        st.caption("[View Live Map](https://threatmap.checkpoint.com)")
 
-        with col3:
-            st.subheader("Live Metrics")
-            st.metric("Detected Phishing Sites (24h)", f"{random.randint(1000, 5000)}+")
-            st.metric("Global Intrusion Attempts", f"{random.randint(50000, 120000)}+")
-            st.metric("Blocked Attacks", f"{random.randint(20000, 80000)}+")
+    with col3:
+        st.subheader("Live Metrics")
+        st.metric("Detected Phishing Sites (24h)", f"{random.randint(1000, 5000)}+")
+        st.metric("Global Intrusion Attempts", f"{random.randint(50000, 120000)}+")
+        st.metric("Blocked Attacks", f"{random.randint(20000, 80000)}+")
 
-        st.markdown("---")
-        st.header("🧠 Select a Security Module")
+    st.markdown("---")
+    st.header("🧠 Select a Security Module")
 
-        cols = st.columns(3)
-        for i, mod in enumerate(MODULE_FUNCTIONS.keys()):
-            with cols[i % 3]:
-                if st.button(mod, key=f"mod_{mod}"):
-                    st.session_state.page = mod
-                    st.rerun()
-
+    cols = st.columns(3)
+    for i, mod in enumerate(MODULE_FUNCTIONS.keys()):
+        with cols[i % 3]:
+            if st.button(mod, key=f"mod_{mod}"):
+                st.session_state.page = mod
+                st.rerun()
+                
     elif nav == "Admin":
         admin_panel()
 if st.session_state.get("page") in MODULE_FUNCTIONS:
