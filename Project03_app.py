@@ -534,42 +534,45 @@ if st.session_state.logged_in:
         log_event(st.session_state.user, "Logged out")
         st.session_state.clear()
         st.rerun()
+
     elif nav == "Dashboard":
         st.markdown("### 🌍 Live Cybersecurity Insights")
         col1, col2, col3 = st.columns(3)
-    with col1:
-        st.subheader("Kaspersky Cyber Map")
-        st.image(
-            "https://i.imgur.com/l7ZBO7C.png",
-            caption="Kaspersky Live Threat Map (Preview)",
-            use_container_width=True
-        )
-        st.caption("[View Live Map](https://cybermap.kaspersky.com)")
 
-    with col2:
-        st.subheader("Checkpoint Threat Map")
-        st.image(
-            "https://i.imgur.com/0nA2oSO.png",
-            caption="Checkpoint Threat Map (Preview)",
-            use_container_width=True
-        )
-        st.caption("[View Live Map](https://threatmap.checkpoint.com)")
+        with col1:
+            st.subheader("Kaspersky Cyber Map")
+            st.image(
+                "https://i.imgur.com/l7ZBO7C.png",
+                caption="Kaspersky Live Threat Map (Preview)",
+                use_container_width=True
+            )
+            st.caption("[View Live Map](https://cybermap.kaspersky.com)")
 
-    with col3:
-        st.subheader("Live Metrics")
-        st.metric("Detected Phishing Sites (24h)", f"{random.randint(1000, 5000)}+")
-        st.metric("Global Intrusion Attempts", f"{random.randint(50000, 120000)}+")
-        st.metric("Blocked Attacks", f"{random.randint(20000, 80000)}+")
+        with col2:
+            st.subheader("Checkpoint Threat Map")
+            st.image(
+                "https://i.imgur.com/0nA2oSO.png",
+                caption="Checkpoint Threat Map (Preview)",
+                use_container_width=True
+            )
+            st.caption("[View Live Map](https://threatmap.checkpoint.com)")
 
-    st.markdown("---")
-    st.header("🧠 Select a Security Module")
+        with col3:
+            st.subheader("Live Metrics")
+            st.metric("Detected Phishing Sites (24h)", f"{random.randint(1000, 5000)}+")
+            st.metric("Global Intrusion Attempts", f"{random.randint(50000, 120000)}+")
+            st.metric("Blocked Attacks", f"{random.randint(20000, 80000)}+")
 
-    cols = st.columns(3)
-    for i, mod in enumerate(MODULE_FUNCTIONS.keys()):
-        with cols[i % 3]:
-            if st.button(mod, key=f"mod_{mod}"):
-                st.session_state.page = mod
-                st.rerun()      
+        st.markdown("---")
+        st.header("🧠 Select a Security Module")
+
+        cols = st.columns(3)
+        for i, mod in enumerate(MODULE_FUNCTIONS.keys()):
+            with cols[i % 3]:
+                if st.button(mod, key=f"mod_{mod}"):
+                    st.session_state.page = mod
+                    st.rerun()
+
     elif nav == "Admin":
         admin_panel()
 if st.session_state.get("page") in MODULE_FUNCTIONS:
