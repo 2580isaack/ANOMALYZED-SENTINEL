@@ -356,7 +356,7 @@ def admin_panel():
      st.header("Admin Panel (placeholder)")
      st.write("Implement admin features here.")
  
- create_users_table() # Call the function to create tables
+create_users_table() # Call the function to create tables
  
  SESSION_DEFAULTS = {
      "logged_in": False,
