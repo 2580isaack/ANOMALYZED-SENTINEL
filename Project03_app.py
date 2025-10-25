@@ -739,23 +739,23 @@ if st.session_state.logged_in:
         st.rerun()
 
     elif nav == "Dashboard":
-        # Green header
-        st.markdown(
-            "<h2 style='color: limegreen;'>🌐 Welcome to the AS Dashboard</h2>",
-            unsafe_allow_html=True
-        )
+    # Elegant green header
+    st.markdown(
+        "<h2 style='color: #2ECC71;'>🌐 Welcome to the AS Dashboard</h2>",
+        unsafe_allow_html=True
+    )
 
-        # Yellow paragraph text
-        st.markdown(
-            """
-            <p style='color: gold; font-size: 16px;'>
-            Welcome to the <b>Anomalyzed Sentinel Dashboard</b>.<br><br>
-            Here you can explore various cybersecurity modules that monitor, detect, and analyze potential threats.<br><br>
-            Select a module below to begin exploring threat intelligence, anomaly detection, and network defense insights.
-            </p>
-            """,
-            unsafe_allow_html=True
-        )
+    # Harmonized yellow text
+    st.markdown(
+        """
+        <p style='color: #F4D03F; font-size: 16px;'>
+        Welcome to the <b style='color:#F7DC6F;'>Anomalyzed Sentinel Dashboard</b>.<br><br>
+        Here you can explore various cybersecurity modules that monitor, detect, and analyze potential threats.<br><br>
+        Select a module below to begin exploring threat intelligence, anomaly detection, and network defense insights.
+        </p>
+        """,
+        unsafe_allow_html=True
+    )
 
         st.markdown("---")
         st.header("🧩 Select a Security Module")
