@@ -178,9 +178,44 @@ def fetch_user(username_or_email):
 def check_password(plain_password, hashed_password):
      """Compare a plain text password with a hashed one using bcrypt."""
      return bcrypt.checkpw(plain_password.encode(), hashed_password)
-     
- # ─── (Optional) Email OTP Helper ───────────────────────────────────────────────
-    #Kept for future use, but NOT called anywhere.
+  def update_user_profile(username, new_username=None, new_email=None):
+    conn = sqlite3.connect("users.db")
+    c = conn.cursor()
+    updates = []
+    params = []
+    if new_username and new_username != username:
+        updates.append("username = ?")
+        params.append(new_username)
+    if new_email:
+        updates.append("email = ?")
+        params.append(new_email)
+    if not updates:
+        conn.close()
+        return "No updates provided."
+    params.append(username)
+    query = f"UPDATE users SET {', '.join(updates)} WHERE username = ?"
+    c.execute(query, tuple(params))
+    conn.commit()
+    conn.close()
+    return "Profile updated successfully."
+
+def change_user_password(username, old_password, new_password):
+    conn = sqlite3.connect("users.db")
+    c = conn.cursor()
+    c.execute("SELECT password FROM users WHERE username=?", (username,))
+    row = c.fetchone()
+    if not row:
+        conn.close()
+        return "User not found."
+    if not bcrypt.checkpw(old_password.encode(), row[0]):
+        conn.close()
+        return "Old password incorrect."
+    hashed = bcrypt.hashpw(new_password.encode(), bcrypt.gensalt())
+    c.execute("UPDATE users SET password=? WHERE username=?", (hashed, username))
+    conn.commit()
+    conn.close()
+    return "Password changed successfully."
+
 def send_otp(email):
      otp = str(random.randint(100_000, 999_999))
      print(f"[DEBUG] Sending OTP {otp} to {email}")
@@ -416,7 +451,23 @@ def global_live_attack():
         except Exception as e:
             st.error(f"⚠️ Could not load PhishTank feed: {e}")
 
- 
+    st.markdown("---")
+    st.subheader("Change Password")
+    old_pw = st.text_input("Old Password", type="password")
+    new_pw = st.text_input("New Password", type="password")
+    confirm_pw = st.text_input("Confirm New Password", type="password")
+
+    if st.button("Change Password"):
+        if new_pw != confirm_pw:
+            st.warning("New passwords do not match.")
+        else:
+            msg = change_user_password(st.session_state.user, old_pw, new_pw)
+            if "successfully" in msg:
+                st.success(msg)
+                log_event(st.session_state.user, "Changed password")
+            else:
+                st.error(msg)
+
 def admin_panel():
     st.header("🛡️ Admin Dashboard")
 
@@ -451,7 +502,45 @@ def admin_panel():
     st.write("### User Activity Logs")
     st.dataframe(logs_df)
 
- 
+def profile_settings():
+    st.header("👤 Profile Settings")
+
+    conn = sqlite3.connect("users.db")
+    c = conn.cursor()
+    c.execute("SELECT username, email, created_at FROM users WHERE username=?", (st.session_state.user,))
+    row = c.fetchone()
+    conn.close()
+
+    if not row:
+        st.error("User not found.")
+        return
+
+    current_username, current_email = row[0], row[1]
+    st.subheader("Account Summary")
+    st.write(f"**Username:** {current_username}")
+    st.write(f"**Email:** {current_email}")
+    # created_at may be None if your table doesn't have it, handle gracefully
+    try:
+        st.write(f"**Account created:** {row[2]}")
+    except Exception:
+        pass
+
+    st.markdown("---")
+    st.subheader("Update Profile Info")
+    new_username = st.text_input("New Username", value=current_username)
+    new_email = st.text_input("New Email", value=current_email)
+
+    if st.button("Update Profile"):
+        msg = update_user_profile(st.session_state.user, new_username, new_email)
+        if "successfully" in msg.lower():
+            st.success(msg)
+            log_event(st.session_state.user, "Updated profile")
+            # If username changed, update session username
+            st.session_state.user = new_username
+            st.rerun()
+        else:
+            st.error(msg)
+
 create_users_table() # Call the function to create tables
  
 SESSION_DEFAULTS = {
@@ -479,7 +568,7 @@ with st.sidebar:
      else:
          nav = st.radio(
              "Menu",
-             ["Dashboard", "Logout"] + (["Admin"] if st.session_state.is_admin else []),
+             ["Dashboard", "Profile Settings", "Logout"] + (["Admin"] if st.session_state.is_admin else [])
              key="main_nav",
          )
          
@@ -525,7 +614,44 @@ elif st.session_state.page == "auth" and nav == "Sign Up":
                  st.error(str(e))
  # ─── 3) Forgot-Password (stub) ───────────────────────────────────────────────
 elif st.session_state.page == "auth" and nav == "Forgot Password":
-     st.info("Forgot-password flow goes here.")
+    st.subheader("🔐 Reset Password via Email")
+
+    email = st.text_input("Enter your registered email", key="fp_email")
+    if st.button("Send OTP", key="send_otp_btn"):
+        otp = send_otp(email)
+        expiry = datetime.now().timestamp() + 300
+        conn = sqlite3.connect("users.db")
+        conn.execute("REPLACE INTO reset_codes (email, code, expiry_time) VALUES (?, ?, ?)", 
+                     (email, otp, expiry))
+        conn.commit()
+        conn.close()
+        st.success("OTP sent to your email (valid for 5 minutes).")
+
+    otp_input = st.text_input("Enter OTP", key="fp_otp")
+    new_pw = st.text_input("New Password", type="password", key="fp_new_pw")
+    confirm_pw = st.text_input("Confirm Password", type="password", key="fp_confirm_pw")
+
+    if st.button("Reset Password", key="reset_pw_btn"):
+        conn = sqlite3.connect("users.db")
+        c = conn.cursor()
+        c.execute("SELECT code, expiry_time FROM reset_codes WHERE email=?", (email,))
+        row = c.fetchone()
+        if not row:
+            st.error("No reset request found.")
+        elif otp_input != row[0]:
+            st.error("Invalid OTP.")
+        elif datetime.now().timestamp() > float(row[1]):
+            st.error("OTP expired.")
+        elif new_pw != confirm_pw:
+            st.error("Passwords do not match.")
+        else:
+            hashed = bcrypt.hashpw(new_pw.encode(), bcrypt.gensalt())
+            c.execute("UPDATE users SET password=? WHERE email=?", (hashed, email))
+            conn.commit()
+            st.success("Password reset successfully! You can now log in.")
+            st.session_state.page = "auth"
+        conn.close()
+
  # ─── 4) Main App (Dashboard & Modules) ───────────────────────────────────────
 if st.session_state.logged_in:
     st.sidebar.title("Navigation")
@@ -555,6 +681,8 @@ if st.session_state.logged_in:
                     st.session_state.page = mod
                     st.rerun()
 
+    elif nav == "Profile Settings":
+        profile_settings()
     elif nav == "Admin":
         admin_panel()
 
