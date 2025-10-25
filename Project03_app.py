@@ -358,7 +358,7 @@ def admin_panel():
  
 create_users_table() # Call the function to create tables
  
- SESSION_DEFAULTS = {
+SESSION_DEFAULTS = {
      "logged_in": False,
      "is_admin": False,
      "user": "",
