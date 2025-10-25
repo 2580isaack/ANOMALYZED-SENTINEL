@@ -132,7 +132,7 @@ def check_password(plain_password, hashed_password):
      return bcrypt.checkpw(plain_password.encode(), hashed_password)
      
  # ─── (Optional) Email OTP Helper ───────────────────────────────────────────────
-    Kept for future use, but NOT called anywhere.
+    #Kept for future use, but NOT called anywhere.
 def send_otp(email):
      otp = str(random.randint(100_000, 999_999))
      print(f"[DEBUG] Sending OTP {otp} to {email}")
