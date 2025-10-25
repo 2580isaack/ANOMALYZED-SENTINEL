@@ -555,10 +555,10 @@ if st.session_state.logged_in:
              st.metric("Detected Phishing Sites (24h)", f"{random.randint(1000, 5000)}+")
              st.metric("Global Intrusion Attempts", f"{random.randint(50000, 120000)}+")
              st.metric("Blocked Attacks", f"{random.randint(20000, 80000)}+")
-    st.markdown("---")
-    st.header("🧠 Select a Security Module")
-    cols = st.columns(3)
-    for i, mod in enumerate(MODULE_FUNCTIONS.keys()):
+             st.markdown("---")
+             st.header("🧠 Select a Security Module")
+             cols = st.columns(3)
+        for i, mod in enumerate(MODULE_FUNCTIONS.keys()):
         with cols[i % 3]:
             if st.button(mod, key=f"mod_{mod}"):
                 st.session_state.page = mod
