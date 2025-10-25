@@ -7,20 +7,20 @@
     #https://colab.research.google.com/drive/1vkM4-cSMcSvKQve30U-8fcm4kB6I97u7
 #"""
 
- import streamlit as st
- import sqlite3, smtplib, random, string, bcrypt, pandas as pd, json, re, hashlib, secrets
- from typing import List
- from email.message import EmailMessage
- from datetime import datetime
- import streamlit.components.v1 as components
+import streamlit as st
+import sqlite3, smtplib, random, string, bcrypt, pandas as pd, json, re, hashlib, secrets
+from typing import List
+from email.message import EmailMessage
+from datetime import datetime
+import streamlit.components.v1 as components
  
  # ─── Streamlit Theme ───────────────────────────────────────────────────────────
- st.set_page_config(page_title="ANOMALYZED SENTINEL", layout="wide")
- st.markdown(
-     """
-     <style>
-     .stApp {
-         background: linear-gradient(to bottom, #cc99ff 4%, #999966 84%);
+st.set_page_config(page_title="ANOMALYZED SENTINEL", layout="wide")
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background: linear-gradient(to bottom, #cc99ff 4%, #999966 84%);
      }
      section[data-testid="stSidebar"] {
          background: rgb(166, 138, 77);
