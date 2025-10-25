@@ -741,7 +741,7 @@ if st.session_state.logged_in:
     elif nav == "Dashboard":
         # Elegant green header
         st.markdown(
-            "<h2 style='color: #2ECC71;'>🌐 Welcome to the AS Dashboard</h2>",
+            "<h2 style='color: #0D47A1;'>🌐 Welcome to the AS Dashboard</h2>",
             unsafe_allow_html=True
         )
 
@@ -749,7 +749,7 @@ if st.session_state.logged_in:
         st.markdown(
             """
             <p style='color: #F4D03F; font-size: 16px;'>
-            Welcome to the <b style='color:#F7DC6F;'>Anomalyzed Sentinel Dashboard</b>.<br><br>
+            Welcome to the <b style='color:#1A237E;'>Anomalyzed Sentinel Dashboard</b>.<br><br>
             Here you can explore various cybersecurity modules that monitor, detect, and analyze potential threats.<br><br>
             Select a module below to begin exploring threat intelligence, anomaly detection, and network defense insights.
             </p>
