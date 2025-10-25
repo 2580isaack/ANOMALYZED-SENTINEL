@@ -367,7 +367,7 @@ SESSION_DEFAULTS = {
  
 for k, v in SESSION_DEFAULTS.items():
      st.session_state.setdefault(k, v)
- MODULE_FUNCTIONS = {
+MODULE_FUNCTIONS = {
      "A.I Threat Engine": ai_threat_engine,
      "Email Protection": email_protection,
      "Order Integrity": order_validation,
