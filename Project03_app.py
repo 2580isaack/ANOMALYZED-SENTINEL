@@ -36,8 +36,14 @@ st.markdown(
      """,
      unsafe_allow_html=True,
  )
- # ─── Database Helpers ──────────────────────────────────────────────────────────
-import sqlite3
+c.execute("""
+CREATE TABLE IF NOT EXISTS reset_codes (
+    email TEXT PRIMARY KEY,
+    code TEXT,
+    expiry_time REAL
+)
+""")
+
 
 def create_users_table():
     conn = sqlite3.connect("users.db")
