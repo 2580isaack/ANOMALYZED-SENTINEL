@@ -534,10 +534,8 @@ if st.session_state.logged_in:
         log_event(st.session_state.user, "Logged out")
         st.session_state.clear()
         st.rerun()
-
     elif nav == "Dashboard":
     st.markdown("### 🌍 Live Cybersecurity Insights")
-
     col1, col2, col3 = st.columns(3)
 
     with col1:
