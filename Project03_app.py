@@ -748,7 +748,7 @@ if st.session_state.logged_in:
         # Harmonized yellow text
         st.markdown(
             """
-            <p style='color: #F4D03F; font-size: 16px;'>
+            <p style='color: #1A237E; font-size: 16px;'>
             Welcome to the <b style='color:#1A237E;'>Anomalyzed Sentinel Dashboard</b>.<br><br>
             Here you can explore various cybersecurity modules that monitor, detect, and analyze potential threats.<br><br>
             Select a module below to begin exploring threat intelligence, anomaly detection, and network defense insights.
