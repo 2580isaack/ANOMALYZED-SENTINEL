@@ -37,7 +37,7 @@ st.markdown(
      unsafe_allow_html=True,
  )
  # ─── Database Helpers ──────────────────────────────────────────────────────────
- def create_users_table():
+def create_users_table():
      conn = sqlite3.connect("users.db")
      c = conn.cursor()
      c.execute(
