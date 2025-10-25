@@ -84,5 +84,4 @@ You are free to use, modify, and distribute it with proper credit.
 Developed by: Isaack Mutembei Sani
 Role: Cybersecurity Student & Applied Statistician
 LinkedIn: www.linkedin.com/in/isaack-sani-b88aa8387
-
-GitHub:
+GitHub: https://github.com/2580isaack
