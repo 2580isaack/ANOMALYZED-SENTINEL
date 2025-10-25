@@ -535,9 +535,8 @@ if st.session_state.logged_in:
         st.session_state.clear()
         st.rerun()
     elif nav == "Dashboard":
-    st.markdown("### 🌍 Live Cybersecurity Insights")
-    col1, col2, col3 = st.columns(3)
-
+        st.markdown("### 🌍 Live Cybersecurity Insights")
+        col1, col2, col3 = st.columns(3)
     with col1:
         st.subheader("Kaspersky Cyber Map")
         st.image(
