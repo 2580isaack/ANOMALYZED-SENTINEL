@@ -178,7 +178,7 @@ def fetch_user(username_or_email):
 def check_password(plain_password, hashed_password):
      """Compare a plain text password with a hashed one using bcrypt."""
      return bcrypt.checkpw(plain_password.encode(), hashed_password)
-  def update_user_profile(username, new_username=None, new_email=None):
+def update_user_profile(username, new_username=None, new_email=None):
     conn = sqlite3.connect("users.db")
     c = conn.cursor()
     updates = []
