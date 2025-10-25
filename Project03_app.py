@@ -528,50 +528,52 @@ elif st.session_state.page == "auth" and nav == "Forgot Password":
      st.info("Forgot-password flow goes here.")
  # ─── 4) Main App (Dashboard & Modules) ───────────────────────────────────────
 if st.session_state.logged_in:
-     st.sidebar.title("Navigation")
-     if nav == "Logout":
-         log_event(st.session_state.user, "Logged out")
-         st.session_state.clear()
-         st.rerun()
-     elif nav == "Dashboard":
-         st.markdown("### 🌍 Live Cybersecurity Insights")
-         col1, col2, col3 = st.columns(3)
-         with col1:
-             st.subheader("Kaspersky Cyber Map")
-             try:
-                 components.iframe("https://cybermap.kaspersky.com", height=250)
-             except:
-                 st.info("⚠️ Unable to display Kaspersky map (embedding blocked).")
-                 st.caption("Source: kaspersky.com")
-         with col2:
-             st.subheader("Checkpoint Threat Map")
-             try:
-                 components.iframe("https://threatmap.checkpoint.com", height=250)
-             except:
-                 st.info("⚠️ Unable to display Checkpoint map (embedding blocked).")
-                 st.caption("Source: checkpoint.com")
-         with col3:
-             st.subheader("Live Metrics")
-             st.metric("Detected Phishing Sites (24h)", f"{random.randint(1000, 5000)}+")
-             st.metric("Global Intrusion Attempts", f"{random.randint(50000, 120000)}+")
-             st.metric("Blocked Attacks", f"{random.randint(20000, 80000)}+")
-             st.markdown("---")
-             st.header("🧠 Select a Security Module")
-             cols = st.columns(3)
-    for i, mod in enumerate(MODULE_FUNCTIONS.keys()):
+    st.sidebar.title("Navigation")
+
+    if nav == "Logout":
+        log_event(st.session_state.user, "Logged out")
+        st.session_state.clear()
+        st.rerun()
+
+    elif nav == "Dashboard":
+        st.markdown("### 🌍 Live Cybersecurity Insights")
+
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            st.subheader("Kaspersky Cyber Map")
+            try:
+                components.iframe("https://cybermap.kaspersky.com", height=250)
+            except:
+                st.info("⚠️ Unable to display Kaspersky map (embedding blocked).")
+            st.caption("Source: kaspersky.com")
+
+        with col2:
+            st.subheader("Checkpoint Threat Map")
+            try:
+                components.iframe("https://threatmap.checkpoint.com", height=250)
+            except:
+                st.info("⚠️ Unable to display Checkpoint map (embedding blocked).")
+            st.caption("Source: checkpoint.com")
+
+        with col3:
+            st.subheader("Live Metrics")
+            st.metric("Detected Phishing Sites (24h)", f"{random.randint(1000, 5000)}+")
+            st.metric("Global Intrusion Attempts", f"{random.randint(50000, 120000)}+")
+            st.metric("Blocked Attacks", f"{random.randint(20000, 80000)}+")
+
+        st.markdown("---")
+        st.header("🧠 Select a Security Module")
+
+        cols = st.columns(3)
+        for i, mod in enumerate(MODULE_FUNCTIONS.keys()):
             with cols[i % 3]:
                 if st.button(mod, key=f"mod_{mod}"):
                     st.session_state.page = mod
                     st.rerun()
-                    st.header("Select a Module")
-                    cols = st.columns(3)
-for i, mod in enumerate(MODULE_FUNCTIONS.keys()):
-    with cols[i % 3]:
-        if st.button(mod, key=f"mod_{mod}"):
-            st.session_state.page = mod
-            st.rerun()
-        elif nav == "Admin":
-            admin_panel()
+
+    elif nav == "Admin":
+        admin_panel()
 if st.session_state.get("page") in MODULE_FUNCTIONS:
      MODULE_FUNCTIONS[st.session_state["page"]]()
 
