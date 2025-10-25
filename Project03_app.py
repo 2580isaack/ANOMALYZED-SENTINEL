@@ -64,7 +64,7 @@ def create_users_table():
      )
      conn.commit()
      conn.close()
- def add_user(u, pw, email, adm=False):
+def add_user(u, pw, email, adm=False):
      conn = sqlite3.connect("users.db")
      c = conn.cursor()
      if c.execute(
@@ -78,7 +78,7 @@ def create_users_table():
      )
      conn.commit()
      conn.close()
- def login_user(u, pw):
+def login_user(u, pw):
      """
      Authenticate user by username and password.
      Returns (True, user_dict) on success, else (False, {}).
@@ -92,7 +92,7 @@ def create_users_table():
      if row and bcrypt.checkpw(pw.encode(), row[0]):
          return True, {"username": u, "is_admin": bool(row[1])}
      return False, {}
- def log_event(user, action):
+def log_event(user, action):
      conn = sqlite3.connect("users.db")
      conn.execute(
          "INSERT INTO activity_logs(username, action, timestamp) VALUES (?, ?, ?)",
@@ -100,12 +100,12 @@ def create_users_table():
      )
      conn.commit()
      conn.close()
- def delete_user(u):
+def delete_user(u):
      conn = sqlite3.connect("users.db")
      conn.execute("DELETE FROM users WHERE username=?", (u,))
      conn.commit()
      conn.close()
- def fetch_user(username_or_email):
+def fetch_user(username_or_email):
      """Retrieve user info from DB by username or email."""
      conn = sqlite3.connect("users.db")
      cursor = conn.cursor()
@@ -127,13 +127,13 @@ def create_users_table():
              "is_admin": bool(row[3]),
          }
      return None
- def check_password(plain_password, hashed_password):
+def check_password(plain_password, hashed_password):
      """Compare a plain text password with a hashed one using bcrypt."""
      return bcrypt.checkpw(plain_password.encode(), hashed_password)
      
  # ─── (Optional) Email OTP Helper ───────────────────────────────────────────────
     Kept for future use, but NOT called anywhere.
- def send_otp(email):
+def send_otp(email):
      otp = str(random.randint(100_000, 999_999))
      print(f"[DEBUG] Sending OTP {otp} to {email}")
      msg = EmailMessage()
@@ -152,7 +152,7 @@ def create_users_table():
  
      return otp
  # ─── Core Security / Analysis Functions ───────────────────────────────────────
- def detect_anomalies(df):
+def detect_anomalies(df):
      num = df.select_dtypes(include="number")
      if num.empty:
          raise ValueError("No numeric columns.")
@@ -172,10 +172,10 @@ def create_users_table():
      "act now": r"(act\s+)?now\s+to\s+avoid\s+.*",
      "win": r"(you\s+have\s+)?won\s+.*",
  }
- def is_phishing(txt): return any(re.search(p, txt.lower()) for p in _PAT.values())
- def explain_phishing_detection(txt): return [k for k, p in _PAT.items() if re.search(p, txt.lower())]
- def create_order_hash(o): return hashlib.sha256(json.dumps(o, sort_keys=True).encode()).hexdigest()
- def scan_vulnerabilities(f):
+def is_phishing(txt): return any(re.search(p, txt.lower()) for p in _PAT.values())
+def explain_phishing_detection(txt): return [k for k, p in _PAT.items() if re.search(p, txt.lower())]
+def create_order_hash(o): return hashlib.sha256(json.dumps(o, sort_keys=True).encode()).hexdigest()
+def scan_vulnerabilities(f):
      try:
          df = (
              pd.read_csv(f)
@@ -191,7 +191,7 @@ def create_users_table():
          return vuln, ""
      except Exception as e:
          return pd.DataFrame(), str(e)
- def simulate_network_logs():
+def simulate_network_logs():
      ips = ["192.168.1.2", "10.0.0.5", "172.16.0.3", "203.0.113.10"]
      actions = ["login", "file_access", "failed_login", "port_scan", "data_transfer"]
      return [
@@ -203,14 +203,14 @@ def create_users_table():
          }
          for _ in range(15)
      ]
- def detect_suspicious_activity(logs):
+def detect_suspicious_activity(logs):
      return [
          l
          for l in logs
          if l["action"] in ["failed_login", "port_scan"]
          or (l["action"] == "data_transfer" and l["status"] == "failure")
      ]
- def analyze_behavior(logs):
+def analyze_behavior(logs):
      summ = {}
      for l in logs:
          summ.setdefault(l["ip"], {"logins": 0, "fail": 0, "scan": 0})
@@ -223,7 +223,7 @@ def create_users_table():
      return {ip: s for ip, s in summ.items() if s["fail"] >= 3 or s["scan"] > 0}
      
  # ─── Module Pages ──────────────────────────────────────────────────────────────
- def ai_threat_engine():
+def ai_threat_engine():
      st.header("A.I Threat Engine")
      f = st.file_uploader("Upload CSV/TXT", type=["csv", "txt"])
      if f:
@@ -236,7 +236,7 @@ def create_users_table():
          st.subheader("Anomalies")
          st.dataframe(detect_anomalies(df))
          log_event(st.session_state.user, "AI threat run")
- def email_protection():
+def email_protection():
      st.header("Email Protection")
      txt = st.text_area("Paste email text")
      if st.button("Scan"):
@@ -246,13 +246,13 @@ def create_users_table():
          else:
              st.success("Looks clean")
          log_event(st.session_state.user, "Phishing scan")
- def order_validation():
+def order_validation():
      st.header("Order Integrity")
      o = st.text_input("Order details")
      if st.button("Generate hash"):
          st.code(create_order_hash(o))
          log_event(st.session_state.user, "Hash generate")
- def network_monitor():
+def network_monitor():
      st.header("Network Monitor")
      logs = simulate_network_logs()
      st.subheader("Raw logs")
@@ -260,13 +260,13 @@ def create_users_table():
      st.subheader("Suspicious")
      st.json(detect_suspicious_activity(logs))
      log_event(st.session_state.user, "View network")
- def insider_monitoring():
+def insider_monitoring():
      st.header("Insider Threats")
      logs = simulate_network_logs()
      st.json(analyze_behavior(logs))
      log_event(st.session_state.user, "Insider monitor")
  
- def vulnerability_scanner():
+def vulnerability_scanner():
      st.header("Vulnerability Scanner")
      f = st.file_uploader("Software list CSV/TXT")
      if f:
@@ -282,17 +282,17 @@ def create_users_table():
          
  # Cached PhishTank fetcher to avoid rate-limit issues
  @st.cache_data(ttl=600)
- def fetch_phishtank_data():
+def fetch_phishtank_data():
      url = "http://data.phishtank.com/data/online-valid.csv"
      return pd.read_csv(url)
 
 
  # Initialize fullscreen state if not set
- if "fullscreen_map" not in st.session_state:
+if "fullscreen_map" not in st.session_state:
      st.session_state["fullscreen_map"] = None
 
  # Global Attack Monitoring Page
- def global_live_attack():
+def global_live_attack():
      st.header("Global Live Cyberattack Monitoring")
  
      # Get current fullscreen target
@@ -352,7 +352,7 @@ def create_users_table():
          **Data sources:** PhishTank, Fortinet, Bitdefender, MITRE ATT&CK
          """)
  
- def admin_panel():
+def admin_panel():
      st.header("Admin Panel (placeholder)")
      st.write("Implement admin features here.")
  
@@ -365,7 +365,7 @@ def create_users_table():
      "page": "auth",  # "auth" | "Dashboard" | any MODULE key
  }
  
- for k, v in SESSION_DEFAULTS.items():
+for k, v in SESSION_DEFAULTS.items():
      st.session_state.setdefault(k, v)
  MODULE_FUNCTIONS = {
      "A.I Threat Engine": ai_threat_engine,
@@ -377,7 +377,7 @@ def create_users_table():
      "Global Live Attack": global_live_attack
  }
  # ─── Sidebar Navigation ───────────────────────────────────────────────────────
- with st.sidebar:
+with st.sidebar:
      if st.session_state.page == "auth":
          nav = st.radio("Menu", ["Login", "Sign Up", "Forgot Password"], key="auth_nav")
      else:
@@ -388,7 +388,7 @@ def create_users_table():
          )
          
  # ─── 1) Login ────────────────────────────────────────────────────────────────
- if st.session_state.page == "auth" and nav == "Login":
+if st.session_state.page == "auth" and nav == "Login":
      st.subheader("Login")
      col1, col2 = st.columns(2)
      with col1:
@@ -409,7 +409,7 @@ def create_users_table():
              st.error("Invalid username/email or password.")
              
  # ─── 2) Sign-Up ───────────────────────────────────────────────────────────────
- elif st.session_state.page == "auth" and nav == "Sign Up":
+elif st.session_state.page == "auth" and nav == "Sign Up":
      st.subheader("Create an Account")
      u = st.text_input("Username", key="su_user")
      em = st.text_input("Email", key="su_email")
@@ -426,10 +426,10 @@ def create_users_table():
              except Exception as e:
                  st.error(str(e))
  # ─── 3) Forgot-Password (stub) ───────────────────────────────────────────────
- elif st.session_state.page == "auth" and nav == "Forgot Password":
+elif st.session_state.page == "auth" and nav == "Forgot Password":
      st.info("Forgot-password flow goes here.")
  # ─── 4) Main App (Dashboard & Modules) ───────────────────────────────────────
- if st.session_state.logged_in:
+if st.session_state.logged_in:
      st.sidebar.title("Navigation")
      if nav == "Logout":
          log_event(st.session_state.user, "Logged out")
@@ -446,7 +446,7 @@ def create_users_table():
      elif nav == "Admin":
          admin_panel()
  
- if st.session_state.get("page") in MODULE_FUNCTIONS:
+if st.session_state.get("page") in MODULE_FUNCTIONS:
      MODULE_FUNCTIONS[st.session_state["page"]]()
 
      # Show "Back to Dashboard" button after rendering the module
