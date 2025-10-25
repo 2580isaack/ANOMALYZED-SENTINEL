@@ -36,15 +36,6 @@ st.markdown(
      """,
      unsafe_allow_html=True,
  )
-c.execute("""
-CREATE TABLE IF NOT EXISTS reset_codes (
-    email TEXT PRIMARY KEY,
-    code TEXT,
-    expiry_time REAL
-)
-""")
-
-
 def create_users_table():
     conn = sqlite3.connect("users.db")
     c = conn.cursor()
@@ -90,7 +81,7 @@ def create_users_table():
         """
     )
 
-    # --- LOGIN ATTEMPTS TABLE (optional, helps with security analytics) ---
+    # --- LOGIN ATTEMPTS TABLE ---
     c.execute(
         """
         CREATE TABLE IF NOT EXISTS login_attempts(
@@ -102,7 +93,7 @@ def create_users_table():
         """
     )
 
-    # --- ADMIN ACTIONS TABLE (for role-based tracking) ---
+    # --- ADMIN ACTIONS TABLE ---
     c.execute(
         """
         CREATE TABLE IF NOT EXISTS admin_actions(
@@ -117,7 +108,6 @@ def create_users_table():
 
     conn.commit()
     conn.close()
-
 def add_user(u, pw, email, adm=False):
      conn = sqlite3.connect("users.db")
      c = conn.cursor()
