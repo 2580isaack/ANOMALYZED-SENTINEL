@@ -529,58 +529,35 @@ elif st.session_state.page == "auth" and nav == "Forgot Password":
  # ─── 4) Main App (Dashboard & Modules) ───────────────────────────────────────
 if st.session_state.logged_in:
     st.sidebar.title("Navigation")
+
     if nav == "Logout":
         log_event(st.session_state.user, "Logged out")
         st.session_state.clear()
         st.rerun()
+
     elif nav == "Dashboard":
         st.markdown("### 🌍 Live Cybersecurity Insights")
-        # Section 1: Live Global Threat Feeds
-        st.subheader("🌐 Real-Time Cyber Threat Intelligence Feeds")
-        feed_col1, feed_col2 = st.columns(2)
-        with feed_col1:
-            st.markdown("**Latest Phishing URLs (PhishTank)**")
-            try:
-                df_phish = fetch_phishtank_data().head(5)[["url", "submission_time"]]
-                st.dataframe(df_phish, hide_index=True)
-                st.caption("Source: PhishTank API — Updated every 10 minutes")
-            except Exception as e:
-                st.warning(f"⚠️ Could not fetch PhishTank feed: {e}")
-        with feed_col2:
-            st.markdown("**Recent Malware Reports (AbuseIPDB)**")
-            try:
-                df_malware = fetch_abuseipdb_data().head(5)[["ipAddress", "countryCode", "abuseConfidenceScore"]]
-                st.dataframe(df_malware, hide_index=True)
-                st.caption("Source: AbuseIPDB — Live threat intelligence")
-            except Exception as e:
-                st.warning(f"⚠️ Could not fetch AbuseIPDB feed: {e}")
-        # Section 2: Real-Time Attack Simulation Chart
-        st.markdown("---")
-        st.subheader("📊 Real-Time Attack Activity (Simulated)")
-        attack_data = pd.DataFrame({
-            "Time": pd.date_range(start=pd.Timestamp.now() - pd.Timedelta(minutes=30), periods=30, freq="1min"),
-            "Detected Attacks": np.random.randint(50, 300, size=30)
-        })
-        st.line_chart(attack_data.set_index("Time"))
-        # Section 3: System Summary and Quick Stats
-        st.markdown("---")
-        st.subheader("🧠 Network Security Summary")
-        col1, col2, col3 = st.columns(3)
-        col1.metric("Malicious IPs Detected", f"{random.randint(200, 800)}")
-        col2.metric("Phishing URLs Blocked", f"{random.randint(100, 400)}")
-        col3.metric("Suspicious Logins Flagged", f"{random.randint(20, 100)}")
-        st.caption("Data simulated for demo — integrates with live feeds via API keys in production.")
-        # Section 4: Module Selection
+        st.write(
+            """
+            Welcome to the Anomalyzed Sentinel Dashboard.  
+            Here you can explore various cybersecurity modules that monitor, detect, and analyze potential threats.
+            Select a module below to begin exploring threat intelligence, anomaly detection, and network defense insights.
+            """
+        )
+
         st.markdown("---")
         st.header("🧩 Select a Security Module")
+
         cols = st.columns(3)
         for i, mod in enumerate(MODULE_FUNCTIONS.keys()):
             with cols[i % 3]:
                 if st.button(mod, key=f"mod_{mod}"):
                     st.session_state.page = mod
                     st.rerun()
+
     elif nav == "Admin":
         admin_panel()
+
 
 if st.session_state.get("page") in MODULE_FUNCTIONS:
      MODULE_FUNCTIONS[st.session_state["page"]]()
