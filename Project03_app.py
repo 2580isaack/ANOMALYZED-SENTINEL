@@ -563,15 +563,14 @@ MODULE_FUNCTIONS = {
  }
  # ─── Sidebar Navigation ───────────────────────────────────────────────────────
 with st.sidebar:
-     if st.session_state.page == "auth":
-         nav = st.radio("Menu", ["Login", "Sign Up", "Forgot Password"], key="auth_nav")
-     else:
-         nav = st.radio(
-             "Menu",
-             ["Dashboard", "Profile Settings", "Logout"] + (["Admin"] if st.session_state.is_admin else [])
-             key="main_nav",
-         )
-         
+    if st.session_state.page == "auth":
+        nav = st.radio("Menu", ["Login", "Sign Up", "Forgot Password"], key="auth_nav")
+    else:
+        nav = st.radio(
+            "Menu",
+            ["Dashboard", "Profile Settings", "Logout"] + (["Admin"] if st.session_state.is_admin else []),
+            key="main_nav",
+        )         
  # ─── 1) Login ────────────────────────────────────────────────────────────────
 if st.session_state.page == "auth" and nav == "Login":
      st.subheader("Login")
