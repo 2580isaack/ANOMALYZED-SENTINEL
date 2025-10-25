@@ -604,7 +604,8 @@ def profile_settings():
                 log_event(st.session_state.user, "Changed password")
             else:
                 st.error(msg)
-create_users_table() # Call the function to create tables
+create_users_table()
+ensure_reset_codes_table()
 SESSION_DEFAULTS = {
      "logged_in": False,
      "is_admin": False,
@@ -678,12 +679,26 @@ elif st.session_state.page == "auth" and nav == "Forgot Password":
     st.subheader("🔐 Reset Password via Email")
 
     email = st.text_input("Enter your registered email", key="fp_email")
+
     if st.button("Send OTP", key="send_otp_btn"):
         otp = send_otp(email)
-        expiry = datetime.now().timestamp() + 300
+        expiry = datetime.now().timestamp() + 300  # valid for 5 mins
         conn = sqlite3.connect("users.db")
-        conn.execute("REPLACE INTO reset_codes (email, code, expiry_time) VALUES (?, ?, ?)", 
-                     (email, otp, expiry))
+        c = conn.cursor()
+
+        # Ensure reset_codes table exists before inserting
+        c.execute("""
+            CREATE TABLE IF NOT EXISTS reset_codes(
+                email TEXT PRIMARY KEY,
+                code TEXT,
+                expiry_time TEXT
+            )
+        """)
+        c.execute(
+            "REPLACE INTO reset_codes (email, code, expiry_time) VALUES (?, ?, ?)",
+            (email, otp, expiry)
+        )
+
         conn.commit()
         conn.close()
         st.success("OTP sent to your email (valid for 5 minutes).")
@@ -697,6 +712,7 @@ elif st.session_state.page == "auth" and nav == "Forgot Password":
         c = conn.cursor()
         c.execute("SELECT code, expiry_time FROM reset_codes WHERE email=?", (email,))
         row = c.fetchone()
+
         if not row:
             st.error("No reset request found.")
         elif otp_input != row[0]:
@@ -711,6 +727,7 @@ elif st.session_state.page == "auth" and nav == "Forgot Password":
             conn.commit()
             st.success("Password reset successfully! You can now log in.")
             st.session_state.page = "auth"
+
         conn.close()
 
  # ─── 4) Main App (Dashboard & Modules) ───────────────────────────────────────
