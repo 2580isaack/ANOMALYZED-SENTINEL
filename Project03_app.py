@@ -505,9 +505,10 @@ def admin_panel():
 def profile_settings():
     st.header("👤 Profile Settings")
 
+    # Connect to database and fetch user info
     conn = sqlite3.connect("users.db")
     c = conn.cursor()
-    c.execute("SELECT username, email, created_at FROM users WHERE username=?", (st.session_state.user,))
+    c.execute("SELECT username, email FROM users WHERE username=?", (st.session_state.user,))
     row = c.fetchone()
     conn.close()
 
@@ -515,18 +516,17 @@ def profile_settings():
         st.error("User not found.")
         return
 
-    current_username, current_email = row[0], row[1]
+    current_username, current_email = row
+
+    # --- Account Summary ---
     st.subheader("Account Summary")
     st.write(f"**Username:** {current_username}")
     st.write(f"**Email:** {current_email}")
-    # created_at may be None if your table doesn't have it, handle gracefully
-    try:
-        st.write(f"**Account created:** {row[2]}")
-    except Exception:
-        pass
 
     st.markdown("---")
     st.subheader("Update Profile Info")
+
+    # Update user profile fields
     new_username = st.text_input("New Username", value=current_username)
     new_email = st.text_input("New Email", value=current_email)
 
@@ -535,14 +535,33 @@ def profile_settings():
         if "successfully" in msg.lower():
             st.success(msg)
             log_event(st.session_state.user, "Updated profile")
-            # If username changed, update session username
-            st.session_state.user = new_username
-            st.rerun()
+
+            # If username changed, update the session variable
+            if new_username != st.session_state.user:
+                st.session_state.user = new_username
+                st.rerun()
         else:
             st.error(msg)
 
+    # --- Change Password Section ---
+    st.markdown("---")
+    st.subheader("Change Password")
+
+    old_pw = st.text_input("Old Password", type="password")
+    new_pw = st.text_input("New Password", type="password")
+    confirm_pw = st.text_input("Confirm New Password", type="password")
+
+    if st.button("Change Password"):
+        if new_pw != confirm_pw:
+            st.warning("New passwords do not match.")
+        else:
+            msg = change_user_password(st.session_state.user, old_pw, new_pw)
+            if "successfully" in msg.lower():
+                st.success(msg)
+                log_event(st.session_state.user, "Changed password")
+            else:
+                st.error(msg)
 create_users_table() # Call the function to create tables
- 
 SESSION_DEFAULTS = {
      "logged_in": False,
      "is_admin": False,
