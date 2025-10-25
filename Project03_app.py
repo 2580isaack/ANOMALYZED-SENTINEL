@@ -281,7 +281,7 @@ def vulnerability_scanner():
          log_event(st.session_state.user, "Vuln scan")
          
  # Cached PhishTank fetcher to avoid rate-limit issues
- @st.cache_data(ttl=600)
+@st.cache_data(ttl=600)
 def fetch_phishtank_data():
      url = "http://data.phishtank.com/data/online-valid.csv"
      return pd.read_csv(url)
