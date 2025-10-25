@@ -1,0 +1,17 @@
+# Core Python Libraries
+numpy==1.26.4
+pandas==2.2.2
+# Machine Learning
+scikit-learn==1.5.2
+tensorflow==2.17.0
+# Visualization and Dashboard
+streamlit==1.38.0
+matplotlib==3.9.2
+plotly==5.24.0
+# Database and Data Handling
+SQLAlchemy==2.0.34
+# Utilities
+requests==2.32.3
+joblib==1.4.2
+# Optional (for time, logging, and json utilities)
+python-dateutil==2.9.0.post0
