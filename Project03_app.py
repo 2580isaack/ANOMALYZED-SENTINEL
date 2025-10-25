@@ -423,8 +423,7 @@ if "fullscreen_map" not in st.session_state:
 
  # Global Attack Monitoring Page
 def global_live_attack():
-    st.header("🌍 Global Live Cyberattack Monitoring")
-
+    st.header("Global Live Cyberattack Monitoring")
     # Initialize session variable
     if "fullscreen_map" not in st.session_state:
         st.session_state.fullscreen_map = None
@@ -740,7 +739,7 @@ if st.session_state.logged_in:
         st.rerun()
 
     elif nav == "Dashboard":
-        st.markdown("### 🌍 Live Cybersecurity Insights")
+        st.markdown(" Welcome to the AS Dashboard")
         st.write(
             """
             Welcome to the Anomalyzed Sentinel Dashboard.  
