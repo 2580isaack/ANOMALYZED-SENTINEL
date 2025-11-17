@@ -113,39 +113,7 @@ def create_users_table():
 import sqlite3
 import bcrypt
 
-def reset_admins(new_admin_user, new_admin_email, new_admin_password):
-    conn = sqlite3.connect("users.db")
-    c = conn.cursor()
 
-    # Ensure table exists
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS users(
-            username TEXT PRIMARY KEY,
-            password BLOB NOT NULL,
-            email TEXT UNIQUE NOT NULL,
-            is_admin INTEGER DEFAULT 0,
-            otp TEXT,
-            otp_expiry TEXT,
-            verified INTEGER DEFAULT 0,
-            created_at TEXT DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-
-    # ❌ Delete ALL existing admins
-    c.execute("DELETE FROM users WHERE is_admin = 1")
-
-    # Create hashed password
-    hashed_pw = bcrypt.hashpw(new_admin_password.encode(), bcrypt.gensalt())
-
-    # Insert NEW admin
-    c.execute("""
-        INSERT INTO users (username, password, email, is_admin)
-        VALUES (?, ?, ?, 1)
-    """, (new_admin_user, hashed_pw, new_admin_email))
-
-    conn.commit()
-    conn.close()
-    print("✔️ All old admins removed and new admin created successfully.")
 
 # ========================
 # ⚡ RUN OPERATION HERE
@@ -203,6 +171,74 @@ def ensure_reset_codes_table():
         except Exception as e:
             print("[DB MIGRATION ERROR]", e)
     conn.close()
+
+
+# =======================
+# ⚠️ ADMIN RESET OPERATION
+# =======================
+
+import sqlite3, bcrypt, os
+
+def reset_all_admins_and_create_new():
+    db_path = "users.db"
+    print("Using DB:", os.path.abspath(db_path))
+
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+
+    # Ensure table exists
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS users(
+            username TEXT PRIMARY KEY,
+            password BLOB NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            is_admin INTEGER DEFAULT 0,
+            otp TEXT,
+            otp_expiry TEXT,
+            verified INTEGER DEFAULT 0,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
+    # 1️⃣ DELETE all previous admins
+    c.execute("DELETE FROM users WHERE is_admin = 1")
+
+    # 2️⃣ CREATE your new admin
+    new_user = "rootadmin"
+    new_email = "root@example.com"
+    new_pw = "Admin@2025"   # Change after first login
+
+    hashed = bcrypt.hashpw(new_pw.encode(), bcrypt.gensalt())
+
+    c.execute("""
+        INSERT INTO users (username, password, email, is_admin)
+        VALUES (?, ?, ?, 1)
+    """, (new_user, hashed, new_email))
+
+    conn.commit()
+
+    # 3️⃣ Print confirmation
+    print("\n=== RESET COMPLETE ===")
+    print("New Admin Created:")
+    print("Username:", new_user)
+    print("Password:", new_pw)
+    print("Email:", new_email)
+
+    print("\nCurrent users in DB:")
+    for row in c.execute("SELECT username, email, is_admin FROM users"):
+        print(row)
+
+    conn.close()
+
+# 🚀 RUN THE RESET NOW
+reset_all_admins_and_create_new()
+
+# ⚠️ IMPORTANT:
+# After you see the message "RESET COMPLETE" in terminal,
+# DELETE THIS WHOLE BLOCK OF CODE IMMEDIATELY.
+
+
+
 
 def add_user(u, pw, email, adm=False):
      conn = sqlite3.connect("users.db")
