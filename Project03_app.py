@@ -108,6 +108,55 @@ def create_users_table():
 
     conn.commit()
     conn.close()
+
+
+import sqlite3
+import bcrypt
+
+def reset_admins(new_admin_user, new_admin_email, new_admin_password):
+    conn = sqlite3.connect("users.db")
+    c = conn.cursor()
+
+    # Ensure table exists
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS users(
+            username TEXT PRIMARY KEY,
+            password BLOB NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            is_admin INTEGER DEFAULT 0,
+            otp TEXT,
+            otp_expiry TEXT,
+            verified INTEGER DEFAULT 0,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
+    # ❌ Delete ALL existing admins
+    c.execute("DELETE FROM users WHERE is_admin = 1")
+
+    # Create hashed password
+    hashed_pw = bcrypt.hashpw(new_admin_password.encode(), bcrypt.gensalt())
+
+    # Insert NEW admin
+    c.execute("""
+        INSERT INTO users (username, password, email, is_admin)
+        VALUES (?, ?, ?, 1)
+    """, (new_admin_user, hashed_pw, new_admin_email))
+
+    conn.commit()
+    conn.close()
+    print("✔️ All old admins removed and new admin created successfully.")
+
+# ========================
+# ⚡ RUN OPERATION HERE
+# ========================
+
+reset_admins(
+    new_admin_user="rootadmin",
+    new_admin_email="rootadmin@example.com",
+    new_admin_password="NewStrongAdmin@2025"
+)
+
 def ensure_reset_codes_table():
     """
     Ensure the reset_codes table exists with the expected schema.
