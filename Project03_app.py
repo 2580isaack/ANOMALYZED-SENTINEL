@@ -628,7 +628,7 @@ def profile_settings():
             else:
                 st.error(msg)
 create_users_table()
-ensure_reset_codes_table()
+#ensure_reset_codes_table()
 SESSION_DEFAULTS = {
      "logged_in": False,
      "is_admin": False,
